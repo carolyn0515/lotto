@@ -1,0 +1,26 @@
+services:
+  web:
+    build: .
+    container_name: lotto_web
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    depends_on:
+      - db
+  db:
+    image: postgres:15
+    container_name: lotto_db
+    environment:
+      POSTGRES_DB: lotto_db
+      POSTGRES_USER: lotto_user
+      POSTGRES_PASSWORD: lotto_password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+volumes:
+    postgres_data:
