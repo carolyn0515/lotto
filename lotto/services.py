@@ -83,7 +83,7 @@ def create_winning_results(draw):
         )
         WinningResult.objects.create(
             ticket=ticket,
-            matched=matched_count,
+            matched_count=matched_count,
             matched_bonus=matched_bonus,
             rank=rank
         )
