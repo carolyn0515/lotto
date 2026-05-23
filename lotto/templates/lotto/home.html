@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Lotto Service</title>
+</head>
+<body>
+    <h1>6/45 Lotto Service</h1>
+
+    {% if current_draw %}
+        <h2>현재 회차: {{ current_draw.round_number }}회차</h2>
+        <p>판매 마감 시간: {{ current_draw.close_at }}</p>
+
+        <a href="#">수동 구매하기</a>
+        <br>
+        <a href="#">자동 구매하기</a>
+    {% else %}
+        <p>현재 진행 중인 회차가 없습니다.</p>
+    {% endif %}
+
+    <hr>
+
+    <a href="/admin/">관리자 페이지</a>
+</body>
+</html>
