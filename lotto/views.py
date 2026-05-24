@@ -4,7 +4,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 
 from .forms import ManualPurchaseForm
 from .models import Draw,Ticket
-from .services import purchase_ticket
+from .services import purchase_ticket, generate_random_numbers
 
 def home(request):
     current_draw = (
@@ -47,11 +47,27 @@ def purchase_manual(request, draw_id):
     return render(request, "lotto/purchase_manual.html", context)
 
 @login_required
+def purchase_auto(request, draw_id):
+    draw = get_object_or_404(Draw, id=draw_id)
+    try:
+        numbers = generate_random_numbers()
+        purchase_ticket(
+            user=request.user,
+            draw=draw,
+            numbers=numbers,
+            purchase_type=Ticket.PURCHASE_TYPE_AUTO,
+        )
+        messages.success(request, f"자동 번호 구매가 완료되었습니다. 번호: {numbers}")
+    except ValueError as e:
+        messages.error(request, str(e))
+    return redirect("lotto:my_tickets")
+
+@login_required
 def my_tickets(request):
     tickets = (
         Ticket.objects
         .filter(user=request.user)
-        .select_related("draw")
+        .select_related("draw", "winning_result")
         .order_by("-created_at")
     )
 
