@@ -15,5 +15,7 @@ urlpatterns=[
     ),
     path("my_tickets/", views.my_tickets, name="my_tickets"),
     path("manager/draws/", views.admin_draw_list, name="admin_draw_list"),
+    path("manager/draws/create/", views.create_draw_view, name="create_draw"),
     path("manager/draws/<int:draw_id>/run/", views.run_draw_view, name="run_draw"),
+    path("manager/sales/", views.admin_sales_report, name="admin_sales_report"),
 ]

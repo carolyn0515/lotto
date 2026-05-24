@@ -3,9 +3,10 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
 
-from .forms import ManualPurchaseForm
-from .models import Draw, Ticket
-from .services import generate_random_numbers, purchase_ticket, run_draw
+from .forms import ManualPurchaseForm, DrawCreateForm
+from .models import Draw, Ticket, WinningResult
+from .services import generate_random_numbers, purchase_ticket, run_draw, create_next_draw
+
 def home(request):
     current_draw = (
         Draw.objects
@@ -13,9 +14,19 @@ def home(request):
         .order_by("round_number")
         .first()
     )
+
+    latest_drawn = (
+        Draw.objects
+        .filter(is_drawn=True)
+        .order_by("-round_number")
+        .first()
+    )
+
     context = {
         "current_draw": current_draw,
+        "latest_drawn": latest_drawn,
     }
+
     return render(request, "lotto/home.html", context)
 
 @login_required
@@ -100,3 +111,70 @@ def run_draw_view(request, draw_id):
         except ValueError as e:
             messages.error(request, str(e))
     return redirect("lotto:admin_draw_list")
+
+@staff_member_required
+def admin_sales_report(request):
+    draws = Draw.objects.order_by("-round_number")
+
+    reports = []
+
+    for draw in draws:
+        tickets = Ticket.objects.filter(draw=draw)
+        results = WinningResult.objects.filter(ticket__draw=draw)
+
+        total_ticket_count = tickets.count()
+        manual_ticket_count = tickets.filter(
+            purchase_type=Ticket.PURCHASE_TYPE_MANUAL
+        ).count()
+        auto_ticket_count = tickets.filter(
+            purchase_type=Ticket.PURCHASE_TYPE_AUTO
+        ).count()
+
+        rank_counts = {
+            "1등": results.filter(rank="1등").count(),
+            "2등": results.filter(rank="2등").count(),
+            "3등": results.filter(rank="3등").count(),
+            "4등": results.filter(rank="4등").count(),
+            "5등": results.filter(rank="5등").count(),
+            "낙첨": results.filter(rank="낙첨").count(),
+        }
+
+        reports.append({
+            "draw": draw,
+            "total_ticket_count": total_ticket_count,
+            "manual_ticket_count": manual_ticket_count,
+            "auto_ticket_count": auto_ticket_count,
+            "result_count": results.count(),
+            "rank_counts": rank_counts,
+        })
+
+    context = {
+        "reports": reports,
+    }
+
+    return render(request, "lotto/admin_sales_report.html", context)
+
+@staff_member_required
+def create_draw_view(request):
+    if request.method == "POST":
+        form = DrawCreateForm(request.POST)
+
+        if form.is_valid():
+            close_at = form.cleaned_data["close_at"]
+
+            draw = create_next_draw(close_at)
+
+            messages.success(
+                request,
+                f"{draw.round_number}회차가 생성되었습니다."
+            )
+
+            return redirect("lotto:admin_draw_list")
+    else:
+        form = DrawCreateForm()
+
+    context = {
+        "form": form,
+    }
+
+    return render(request, "lotto/create_draw.html", context)

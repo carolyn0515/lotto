@@ -2,7 +2,7 @@ import random
 
 from django.utils import timezone
 
-from .models import Ticket, WinningResult
+from .models import Draw, Ticket, WinningResult
 
 def validate_lotto_numbers(numbers):
     if len(numbers) != 6:
@@ -115,3 +115,15 @@ def run_draw(draw):
 
 def generate_random_numbers():
     return sorted(random.sample(range(1, 46), 6))
+
+def create_next_draw(close_at):
+    last_draw = Draw.objects.order_by("-round_number").first()
+    if last_draw is None:
+        next_round_number = 1
+    else:
+        next_round_number = last_draw.round_number + 1
+    draw = Draw.objects.create(
+        round_number = next_round_number,
+        close_at = close_at,
+    )
+    return draw

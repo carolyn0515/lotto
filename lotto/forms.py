@@ -38,3 +38,10 @@ class ManualPurchaseForm(forms.Form):
             self.cleaned_data["number5"],
             self.cleaned_data["number6"],
         ]
+
+class DrawCreateForm(forms.Form):
+    close_at = forms.DateTimeField(
+        label="판매 마감 시간",
+        input_formats=["%Y-%m-%d %H:%M"],
+        help_text="예: 2026-05-25 20:00"
+    )
