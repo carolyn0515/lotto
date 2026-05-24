@@ -7,6 +7,19 @@
 <body>
     <h1>6/45 Lotto Service</h1>
 
+{% if user.is_authenticated %}
+    <p>{{ user.username }}님, 로그인 중입니다.</p>
+    <p>보유 코인: {{ user.profile.coin }}</p>
+    <form method="post" action="{% url 'lotto:logout' %}">
+        {% csrf_token %}
+        <button type="submit">로그아웃</button>
+    </form>
+{% else %}
+    <a href="{% url 'lotto:login' %}">로그인</a>
+    <br>
+    <a href="{% url 'lotto:signup' %}">회원가입</a>
+{% endif %}
+
 {% if current_draw %}
     <h2>현재 회차: {{ current_draw.round_number }}회차</h2>
     <p>판매 마감 시간: {{ current_draw.close_at }}</p>
