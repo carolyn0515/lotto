@@ -1,93 +1,112 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <title>Lotto Service</title>
-</head>
-<body>
-    <h1>6/45 Lotto Service</h1>
-{% if messages %}
-    <ul>
-        {% for message in messages %}
-            <li>{{ message }}</li>
-        {% endfor %}
-    </ul>
-{% endif %}
-{% if user.is_authenticated %}
-    <p>{{ user.username }}님, 로그인 중입니다.</p>
-    <p>보유 코인: {{ user.profile.coin }}</p>
+{% extends "lotto/base.html" %}
 
-    <a href="{% url 'lotto:watch_ad' %}">가상 광고 시청하고 코인 받기</a>
+{% block title %}Lotto Lab{% endblock %}
 
-    <br>
+{% block content %}
+<section class="hero">
+    <div class="hero-panel">
+        <p class="eyebrow">Django Docker ML Lotto</p>
+        <h1>All in ONE lotto</h1>
+        <p class="lead">수동 선택, 랜덤 자동 생성, 과거 데이터 기반 ML 추천을 비교하며 6/45 로또 서비스를 체험할 수 있습니다.</p>
+        <div class="actions">
+            {% if user.is_authenticated %}
+                <a class="button" href="{% url 'lotto:my_tickets' %}">내 티켓 보기</a>
+                <a class="button secondary" href="{% url 'lotto:watch_ad' %}">코인 받기</a>
+            {% else %}
+                <a class="button" href="{% url 'lotto:login' %}">로그인</a>
+                <a class="button secondary" href="{% url 'lotto:signup' %}">회원가입</a>
+            {% endif %}
+        </div>
+    </div>
 
-    <form method="post" action="{% url 'lotto:logout' %}">
-        {% csrf_token %}
-        <button type="submit">로그아웃</button>
-    </form>
-{% else %}
-    <a href="{% url 'lotto:login' %}">로그인</a>
-    <br>
-    <a href="{% url 'lotto:signup' %}">회원가입</a>
-{% endif %}
+    <aside class="card stack">
+        {% if user.is_authenticated %}
+            <div>
+                <span class="badge success">로그인 중</span>
+                <h2 class="spaced-title">{{ user.username }}님</h2>
+                <p class="lead">오늘도 행운 실험을 시작해볼까요?</p>
+            </div>
+            <div class="stat-grid">
+                <div class="stat"><span class="stat-label">보유 코인</span><span class="stat-value">{{ user.profile.coin }}</span></div>
+                <div class="stat"><span class="stat-label">수동/자동</span><span class="stat-value">1</span></div>
+                <div class="stat"><span class="stat-label">ML 추천</span><span class="stat-value">2</span></div>
+            </div>
+        {% else %}
+            <div>
+                <span class="badge">방문자 모드</span>
+                <h2 class="spaced-title">로그인하면 구매가 가능해요</h2>
+                <p class="lead">회원가입 시 기본 코인 10개가 지급됩니다.</p>
+            </div>
+        {% endif %}
+    </aside>
+</section>
 
 {% if current_draw %}
-    <h2>현재 회차: {{ current_draw.round_number }}회차</h2>
-    <p>판매 마감 시간: {{ current_draw.close_at }}</p>
+    <section class="section card">
+        <div class="stat-grid">
+            <div class="stat"><span class="stat-label">현재 회차</span><span class="stat-value">{{ current_draw.round_number }}회차</span></div>
+            <div class="stat"><span class="stat-label">판매 마감</span><span class="stat-value text-fit">{{ current_draw.close_at }}</span></div>
+            <div class="stat"><span class="stat-label">상태</span><span class="stat-value">판매 중</span></div>
+        </div>
+    </section>
 
-    <form
-        method="post"
-        action="{% url 'lotto:purchase_manual' current_draw.id %}"
-        onsubmit="return confirm('수동 번호를 구매하면 코인 1개가 차감됩니다. 계속 진행하시겠습니까?');"
-    >
-        {% csrf_token %}
-        <button type="submit">수동 구매하기 (코인 1개)</button>
-    </form>
-    <br>
-    <form
-        method="post"
-        action="{% url 'lotto:purchase_auto' current_draw.id %}"
-        onsubmit="return confirm('자동 번호를 구매하면 코인 1개가 차감됩니다. 계속 진행하시겠습니까?');"
-    >
-        {% csrf_token %}
-        <button type="submit">자동 구매하기 (코인 1개)</button>
-    </form>
-    <br>
-    <form
-        method="post"
-        action="{% url 'lotto:purchase_ml' current_draw.id %}"
-        onsubmit="return confirm('ML 추천 번호를 구매하면 코인 2개가 차감됩니다. 계속 진행하시겠습니까?');"
-    >
-        {% csrf_token %}
-        <button type="submit">ML 추천 구매하기 (코인 2개)</button>
-    </form>
-    <br>
-    <a href="{% url 'lotto:my_tickets' %}">내 티켓 보기</a>
+    <section class="section grid">
+        <article class="card purchase-card">
+            <div><span class="price">코인 1개</span><h3>수동 번호 구매</h3><p>원하는 숫자 6개를 직접 골라 티켓을 만듭니다.</p></div>
+            <form method="post" action="{% url 'lotto:purchase_manual' current_draw.id %}" onsubmit="return confirm('수동 번호를 구매하면 코인 1개가 차감됩니다. 계속 진행하시겠습니까?');">
+                {% csrf_token %}
+                <button class="button full" type="submit">번호 선택하기</button>
+            </form>
+        </article>
+
+        <article class="card purchase-card">
+            <div><span class="price">코인 1개</span><h3>랜덤 자동 구매</h3><p>서버가 1부터 45까지의 숫자 중 6개를 즉시 생성합니다.</p></div>
+            <form method="post" action="{% url 'lotto:purchase_auto' current_draw.id %}" onsubmit="return confirm('자동 번호를 구매하면 코인 1개가 차감됩니다. 계속 진행하시겠습니까?');">
+                {% csrf_token %}
+                <button class="button full" type="submit">자동 구매하기</button>
+            </form>
+        </article>
+
+        <article class="card purchase-card">
+            <div><span class="price">코인 2개</span><h3>ML 추천 구매</h3><p>과거 번호 데이터를 기반으로 추천 조합을 생성합니다.</p></div>
+            <form method="post" action="{% url 'lotto:purchase_ml' current_draw.id %}" onsubmit="return confirm('ML 추천 번호를 구매하면 코인 2개가 차감됩니다. 계속 진행하시겠습니까?');">
+                {% csrf_token %}
+                <button class="button full" type="submit">추천 번호 구매하기</button>
+            </form>
+        </article>
+    </section>
 {% else %}
-    <p>현재 진행 중인 회차가 없습니다.</p>
+    <section class="section empty">
+        <h2>현재 진행 중인 회차가 없습니다.</h2>
+        <p>관리자가 새 회차를 생성하면 티켓 구매가 가능합니다.</p>
+    </section>
 {% endif %}
 
-<hr>
+<section class="section grid two">
+    <article class="card">
+        <h2>최근 추첨 결과</h2>
+        {% if latest_drawn %}
+            <p><strong>{{ latest_drawn.round_number }}회차</strong></p>
+            <div class="numbers">
+                {% for number in latest_drawn.winning_numbers %}
+                    <span class="ball primary">{{ number }}</span>
+                {% endfor %}
+                <span class="ball">{{ latest_drawn.bonus_number }}</span>
+            </div>
+            <p class="muted-text">추첨 시간: {{ latest_drawn.drawn_at }}</p>
+        {% else %}
+            <p class="lead">아직 추첨 완료된 회차가 없습니다.</p>
+        {% endif %}
+    </article>
 
-<h2>최근 추첨 결과</h2>
-
-{% if latest_drawn %}
-    <p>{{ latest_drawn.round_number }}회차</p>
-    <p>당첨 번호: {{ latest_drawn.winning_numbers }}</p>
-    <p>보너스 번호: {{ latest_drawn.bonus_number }}</p>
-    <p>추첨 시간: {{ latest_drawn.drawn_at }}</p>
-{% else %}
-    <p>아직 추첨 완료된 회차가 없습니다.</p>
-{% endif %}
-
-<hr>
-
-<a href="{% url 'lotto:my_tickets' %}">내 티켓 보기</a>
-<br>
-<a href="{% url 'lotto:admin_draw_list' %}">관리자 추첨 페이지</a>
-<br>
-<a href="/admin/">Django 관리자 페이지</a>
-<br>
-<a href="{% url 'lotto:admin_sales_report' %}">관리자 판매/당첨 내역</a>
-</body>
-</html>
+    <article class="card">
+        <h2>관리자 바로가기</h2>
+        <p class="lead">회차 생성, 추첨 실행, 판매 내역 확인은 관리자 권한이 필요합니다.</p>
+        <div class="actions">
+            <a class="button secondary" href="{% url 'lotto:admin_draw_list' %}">추첨 페이지</a>
+            <a class="button secondary" href="{% url 'lotto:admin_sales_report' %}">판매 리포트</a>
+            <a class="button ghost" href="/admin/">Django Admin</a>
+        </div>
+    </article>
+</section>
+{% endblock %}
