@@ -1,11 +1,11 @@
 from django.contrib import messages
+from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
 
 from .forms import ManualPurchaseForm
-from .models import Draw,Ticket
-from .services import purchase_ticket, generate_random_numbers
-
+from .models import Draw, Ticket
+from .services import generate_random_numbers, purchase_ticket, run_draw
 def home(request):
     current_draw = (
         Draw.objects
@@ -76,3 +76,27 @@ def my_tickets(request):
     }
 
     return render(request, "lotto/my_tickets.html", context)
+
+@staff_member_required
+def admin_draw_list(request):
+    draws = Draw.objects.order_by("-round_number")
+
+    context = {
+        "draws": draws,
+    }
+
+    return render(request, "lotto/admin_draw_list.html", context)
+
+@staff_member_required
+def run_draw_view(request, draw_id):
+    draw = get_object_or_404(Draw, id=draw_id)
+    if request.method == "POST":
+        try:
+            run_draw(draw)
+            messages.success(
+                request,
+                f"{draw.round}"
+            )
+        except ValueError as e:
+            messages.error(request, str(e))
+    return redirect("lotto:admin_draw_list")
