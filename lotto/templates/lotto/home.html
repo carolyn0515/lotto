@@ -35,9 +35,32 @@
     <h2>현재 회차: {{ current_draw.round_number }}회차</h2>
     <p>판매 마감 시간: {{ current_draw.close_at }}</p>
 
-    <a href="{% url 'lotto:purchase_manual' current_draw.id %}">수동 구매하기</a>
+    <form
+        method="post"
+        action="{% url 'lotto:purchase_manual' current_draw.id %}"
+        onsubmit="return confirm('수동 번호를 구매하면 코인 1개가 차감됩니다. 계속 진행하시겠습니까?');"
+    >
+        {% csrf_token %}
+        <button type="submit">수동 구매하기</button>
+    </form>
     <br>
-    <a href="{% url 'lotto:purchase_auto' current_draw.id %}">자동 구매하기</a>
+    <form
+        method="post"
+        action="{% url 'lotto:purchase_auto' current_draw.id %}"
+        onsubmit="return confirm('자동 번호를 구매하면 코인 1개가 차감됩니다. 계속 진행하시겠습니까?');"
+    >
+        {% csrf_token %}
+        <button type="submit">자동 구매하기</button>
+    </form>
+    <br>
+    <form
+        method="post"
+        action="{% url 'lotto:purchase_ml' current_draw.id %}"
+        onsubmit="return confirm('ML 추천 번호를 구매하면 코인 2개가 차감됩니다. 계속 진행하시겠습니까?');"
+    >
+        {% csrf_token %}
+        <button type="submit">ML 추천 구매하기</button>
+    </form>
     <br>
     <a href="{% url 'lotto:my_tickets' %}">내 티켓 보기</a>
 {% else %}

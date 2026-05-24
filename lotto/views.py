@@ -12,6 +12,8 @@ from .services import (
     reward_ad_coin,
     run_draw,
 )
+from .ml_service import recommend_lotto_numbers
+
 def home(request):
     current_draw = (
         Draw.objects
@@ -120,7 +122,9 @@ def run_draw_view(request, draw_id):
 @staff_member_required
 def admin_sales_report(request):
     draws = Draw.objects.order_by("-round_number")
-
+    ml_ticket_count = tickets.filter(
+        purchase_type=Ticket.PURCHASE_TYPE_ML
+    ).count()
     reports = []
 
     for draw in draws:
@@ -151,6 +155,7 @@ def admin_sales_report(request):
             "auto_ticket_count": auto_ticket_count,
             "result_count": results.count(),
             "rank_counts": rank_counts,
+            "ml_ticket_count": ml_ticket_count,
         })
 
     context = {
@@ -217,3 +222,31 @@ def watch_ad(request):
         )
         return redirect("lotto:home")
     return render(request, "lotto/watch_ad.html")
+
+@login_required
+def purchase_ml(request, draw_id):
+    draw = get_object_or_404(Draw, id=draw_id)
+
+    if request.method != "POST":
+        messages.error(request, "잘못된 요청입니다.")
+        return redirect("lotto:home")
+    
+    try:
+        numbers = recommend_lotto_numbers(
+            user=request.user,
+            draw=draw,
+        )
+
+        purchase_ticket(
+            user=request.user,
+            draw=draw,
+            numbers=numbers,
+            purchase_type=Ticket.PURCHASE_TYPE_ML,
+        )
+
+        messages.success(request, f"ML 추천 번호 구매가 완료되었습니다. 번호: {numbers}")
+
+    except ValueError as e:
+        messages.error(request, str(e))
+
+    return redirect("lotto:my_tickets")

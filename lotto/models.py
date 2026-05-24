@@ -32,9 +32,11 @@ class Ticket(models.Model):
     )
     PURCHASE_TYPE_AUTO = "AUTO"
     PURCHASE_TYPE_MANUAL = "MANUAL"
+    PURCHASE_TYPE_ML = "ML"
     PURCHASE_TYPE_CHOICES = [
         (PURCHASE_TYPE_AUTO, "자동"),
         (PURCHASE_TYPE_MANUAL, "수동"),
+        (PURCHASE_TYPE_ML, "ML 추천"),
     ]
     numbers = models.JSONField()
     purchase_type = models.CharField(
