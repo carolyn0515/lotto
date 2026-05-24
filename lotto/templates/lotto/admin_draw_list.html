@@ -1,54 +1,81 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <title>관리자 추첨 페이지</title>
-</head>
-<body>
+{% extends "lotto/base.html" %}
+
+{% block title %}관리자 추첨 | Lotto Lab{% endblock %}
+
+{% block content %}
+<section class="hero-panel">
+    <p class="eyebrow">Admin Draw</p>
     <h1>관리자 추첨 페이지</h1>
+    <p class="lead">회차를 생성하고, 마감된 회차의 당첨 번호를 추첨합니다.</p>
+    <div class="actions">
+        <a class="button" href="{% url 'lotto:create_draw' %}">새 회차 생성</a>
+        <a class="button secondary" href="{% url 'lotto:admin_sales_report' %}">판매 리포트</a>
+    </div>
+</section>
 
-    <a href="{% url 'lotto:create_draw' %}">새 회차 생성</a>
-    <hr>
-    {% if messages %}
-        <ul>
-            {% for message in messages %}
-                <li>{{ message }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
-
+<section class="section table-card">
     {% if draws %}
-        <ul>
-            {% for draw in draws %}
-                <li>
-                    {{ draw.round_number }}회차 /
-                    마감 시간: {{ draw.close_at }} /
-
-                    {% if draw.is_drawn %}
-                        추첨 완료 /
-                        당첨 번호: {{ draw.winning_numbers }} /
-                        보너스: {{ draw.bonus_number }}
-                    {% else %}
-                        추첨 전
-
-                        <form method="post" action="{% url 'lotto:run_draw' draw.id %}" style="display:inline;">
-                            {% csrf_token %}
-                            <button type="submit">추첨 실행</button>
-                        </form>
-                    {% endif %}
-                </li>
-            {% endfor %}
-        </ul>
+        <div class="table-scroll">
+            <table>
+                <thead>
+                    <tr>
+                        <th>회차</th>
+                        <th>마감 시간</th>
+                        <th>상태</th>
+                        <th>당첨 번호</th>
+                        <th>보너스</th>
+                        <th>관리</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for draw in draws %}
+                        <tr>
+                            <td><strong>{{ draw.round_number }}회차</strong></td>
+                            <td>{{ draw.close_at }}</td>
+                            <td>
+                                {% if draw.is_drawn %}
+                                    <span class="badge success">추첨 완료</span>
+                                {% else %}
+                                    <span class="badge warning">추첨 전</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if draw.is_drawn %}
+                                    <div class="numbers">
+                                        {% for number in draw.winning_numbers %}
+                                            <span class="ball primary">{{ number }}</span>
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </td>
+                            <td>{% if draw.is_drawn %}<span class="ball">{{ draw.bonus_number }}</span>{% else %}-{% endif %}</td>
+                            <td>
+                                {% if draw.is_drawn %}
+                                    <span class="badge">완료</span>
+                                {% else %}
+                                    <form method="post" action="{% url 'lotto:run_draw' draw.id %}" class="inline-form">
+                                        {% csrf_token %}
+                                        <button class="button secondary" type="submit">추첨 실행</button>
+                                    </form>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     {% else %}
-        <p>등록된 회차가 없습니다.</p>
+        <div class="empty">
+            <h2>등록된 회차가 없습니다.</h2>
+            <a class="button" href="{% url 'lotto:create_draw' %}">첫 회차 만들기</a>
+        </div>
     {% endif %}
+</section>
 
-    <hr>
-
-    <a href="{% url 'lotto:home' %}">홈으로</a>
-    <br>
-    <a href="/admin/">Django 관리자 페이지</a>
-    <br>
-    <a href="{% url 'lotto:admin_sales_report' %}">관리자 판매/당첨 내역</a>
-</body>
-</html>
+<div class="actions">
+    <a class="button ghost" href="{% url 'lotto:home' %}">홈으로</a>
+    <a class="button ghost" href="/admin/">Django 관리자 페이지</a>
+</div>
+{% endblock %}
