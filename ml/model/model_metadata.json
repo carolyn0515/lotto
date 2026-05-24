@@ -1,0 +1,27 @@
+{
+  "model_name": "extra_trees",
+  "model_path": "/app/ml/model/best_lotto_model.joblib",
+  "feature_columns": [
+    "target_number",
+    "recent_5_count",
+    "recent_10_count",
+    "recent_20_count",
+    "total_count",
+    "rounds_since_last_seen",
+    "is_odd",
+    "number_group"
+  ],
+  "target_column": "label",
+  "created_at": "2026-05-24T05:32:48.921559",
+  "train_rows": 35235,
+  "valid_rows": 8820,
+  "train_round_min": 21,
+  "train_round_max": 803,
+  "valid_round_min": 804,
+  "valid_round_max": 999,
+  "best_metrics": {
+    "roc_auc": 0.5143279086883314,
+    "average_precision": 0.13962887147412617
+  },
+  "note": "This model is for MLOps pipeline practice and number recommendation. It does not guarantee actual lottery winning prediction."
+}

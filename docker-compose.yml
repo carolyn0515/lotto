@@ -24,5 +24,15 @@ services:
     ports:
       - "5432:5432"
 
+  ml:
+    build:
+      context: .
+      dockerfile: Dockerfile.ml
+    container_name: lotto_ml
+    working_dir: /app
+    volumes:
+      - .:/app
+    command: tail -f /dev/null
+
 volumes:
   postgres_data:
