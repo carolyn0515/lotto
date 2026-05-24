@@ -17,10 +17,7 @@
     <p>{{ user.username }}님, 로그인 중입니다.</p>
     <p>보유 코인: {{ user.profile.coin }}</p>
 
-    <form method="post" action="{% url 'lotto:watch_ad' %}">
-        {% csrf_token %}
-        <button type="submit">가상 광고 시청하고 코인 받기</button>
-    </form>
+    <a href="{% url 'lotto:watch_ad' %}">가상 광고 시청하고 코인 받기</a>
 
     <br>
 

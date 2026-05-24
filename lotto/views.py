@@ -215,4 +215,5 @@ def watch_ad(request):
             request,
             f"광고 시청 보상으로 코인 5개가 지급되었습니다. 현재 보유 코인: {new_coin}개"
         )
-    return redirect("lotto:home")
+        return redirect("lotto:home")
+    return render(request, "lotto/watch_ad.html")
