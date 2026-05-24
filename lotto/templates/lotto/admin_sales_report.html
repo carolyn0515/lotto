@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>관리자 판매 내역</title>
+</head>
+<body>
+    <h1>관리자 판매/당첨 내역</h1>
+
+    {% if reports %}
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>회차</th>
+                    <th>추첨 상태</th>
+                    <th>전체 판매 수</th>
+                    <th>수동 구매</th>
+                    <th>자동 구매</th>
+                    <th>결과 생성 수</th>
+                    <th>1등</th>
+                    <th>2등</th>
+                    <th>3등</th>
+                    <th>4등</th>
+                    <th>5등</th>
+                    <th>낙첨</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for report in reports %}
+                    <tr>
+                        <td>{{ report.draw.round_number }}회차</td>
+
+                        <td>
+                            {% if report.draw.is_drawn %}
+                                추첨 완료
+                            {% else %}
+                                추첨 전
+                            {% endif %}
+                        </td>
+
+                        <td>{{ report.total_ticket_count }}</td>
+                        <td>{{ report.manual_ticket_count }}</td>
+                        <td>{{ report.auto_ticket_count }}</td>
+                        <td>{{ report.result_count }}</td>
+
+                        <td>{{ report.rank_counts.1등 }}</td>
+                        <td>{{ report.rank_counts.2등 }}</td>
+                        <td>{{ report.rank_counts.3등 }}</td>
+                        <td>{{ report.rank_counts.4등 }}</td>
+                        <td>{{ report.rank_counts.5등 }}</td>
+                        <td>{{ report.rank_counts.낙첨 }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>등록된 회차가 없습니다.</p>
+    {% endif %}
+
+    <hr>
+
+    <a href="{% url 'lotto:admin_draw_list' %}">관리자 추첨 페이지</a>
+    <br>
+    <a href="{% url 'lotto:home' %}">홈으로</a>
+</body>
+</html>
