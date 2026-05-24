@@ -23,6 +23,7 @@ def validate_purchase_type(purchase_type):
     valid_types = [
         Ticket.PURCHASE_TYPE_AUTO,
         Ticket.PURCHASE_TYPE_MANUAL,
+        Ticket.PURCHASE_TYPE_ML,
     ]
 
     if purchase_type not in valid_types:
@@ -41,7 +42,7 @@ def purchase_ticket(user, draw, numbers, purchase_type):
     validate_lotto_numbers(numbers)
     validate_purchase_type(purchase_type)
     validate_draw_is_open(draw)
-    validate_user_has_enough_coin(user)
+    validate_user_has_enough_coin(user, purchase_type)
 
     ticket = Ticket.objects.create(
         user=user,
@@ -50,18 +51,36 @@ def purchase_ticket(user, draw, numbers, purchase_type):
         purchase_type=purchase_type,
     )
 
-    decrease_user_coin(user)
-    
+    decrease_user_coin(user, purchase_type)
+
     return ticket
 
-TICKET_PRICE = 1
+TICKET_PRICE_BY_PURCHASE_TYPE = {
+    Ticket.PURCHASE_TYPE_MANUAL: 1,
+    Ticket.PURCHASE_TYPE_AUTO: 1,
+    Ticket.PURCHASE_TYPE_ML: 2,
+}
 
-def validate_user_has_enough_coin(user):
-        if user.profile.coin < TICKET_PRICE:
-            raise ValueError("코인이 부족하여 티켓을 구매할 수 없습니다.")
-        
-def decrease_user_coin(user):
-    user.profile.coin -= TICKET_PRICE
+def get_ticket_price(purchase_type):
+    try:
+        return TICKET_PRICE_BY_PURCHASE_TYPE[purchase_type]
+    except KeyError:
+        raise ValueError("올바르지 않은 구매 방식입니다.")
+
+
+def validate_user_has_enough_coin(user, purchase_type):
+    ticket_price = get_ticket_price(purchase_type)
+
+    if user.profile.coin < ticket_price:
+        raise ValueError(
+            f"코인이 부족하여 티켓을 구매할 수 없습니다. 필요한 코인: {ticket_price}개"
+        )
+
+
+def decrease_user_coin(user, purchase_type):
+    ticket_price = get_ticket_price(purchase_type)
+
+    user.profile.coin -= ticket_price
     user.profile.save()
 
 
