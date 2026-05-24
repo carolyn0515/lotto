@@ -1,25 +1,30 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <title>수동 구매</title>
-</head>
-<body>
-    <h1>수동 번호 구매</h1>
+{% extends "lotto/base.html" %}
 
-    <h2>{{ draw.round_number }}회차</h2>
-    <p>판매 마감 시간: {{ draw.close_at }}</p>
+{% block title %}수동 번호 구매 | Lotto Lab{% endblock %}
 
+{% block content %}
+<section class="hero">
+    <div class="hero-panel">
+        <p class="eyebrow">Manual Pick</p>
+        <h1>{{ draw.round_number }}회차 수동 구매</h1>
+        <p class="lead">1부터 45까지의 숫자 중 서로 다른 번호 6개를 입력하세요.</p>
+    </div>
+    <aside class="card">
+        <div class="stat">
+            <span class="stat-label">판매 마감 시간</span>
+            <span class="stat-value text-fit">{{ draw.close_at }}</span>
+        </div>
+    </aside>
+</section>
+
+<section class="card form-card number-fields">
     <form method="post">
         {% csrf_token %}
-
         {{ form.as_p }}
-
-        <button type="submit">구매하기</button>
+        <button class="button full" type="submit">구매하기</button>
     </form>
-
-    <hr>
-
-    <a href="{% url 'lotto:home' %}">홈으로</a>
-</body>
-</html>
+    <div class="actions">
+        <a class="button ghost" href="{% url 'lotto:home' %}">홈으로</a>
+    </div>
+</section>
+{% endblock %}
