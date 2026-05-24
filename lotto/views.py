@@ -95,7 +95,7 @@ def run_draw_view(request, draw_id):
             run_draw(draw)
             messages.success(
                 request,
-                f"{draw.round}"
+                f"{draw.round_number}"
             )
         except ValueError as e:
             messages.error(request, str(e))

@@ -7,21 +7,38 @@
 <body>
     <h1>6/45 Lotto Service</h1>
 
-    {% if current_draw %}
-        <h2>현재 회차: {{ current_draw.round_number }}회차</h2>
-        <p>판매 마감 시간: {{ current_draw.close_at }}</p>
+{% if current_draw %}
+    <h2>현재 회차: {{ current_draw.round_number }}회차</h2>
+    <p>판매 마감 시간: {{ current_draw.close_at }}</p>
 
-        <a href="{% url 'lotto:purchase_manual' current_draw.id %}">수동 구매하기</a>
-        <br>
-        <a href="{% url 'lotto:purchase_auto' current_draw.id %}">자동 구매하기</a>
-        <br>
-        <a href="{% url 'lotto:admin_draw_list' %}">관리자 추첨 페이지</a>
-    {% else %}
-        <p>현재 진행 중인 회차가 없습니다.</p>
-    {% endif %}
+    <a href="{% url 'lotto:purchase_manual' current_draw.id %}">수동 구매하기</a>
+    <br>
+    <a href="{% url 'lotto:purchase_auto' current_draw.id %}">자동 구매하기</a>
+    <br>
+    <a href="{% url 'lotto:my_tickets' %}">내 티켓 보기</a>
+{% else %}
+    <p>현재 진행 중인 회차가 없습니다.</p>
+{% endif %}
 
-    <hr>
+<hr>
 
-    <a href="/admin/">관리자 페이지</a>
+<h2>최근 추첨 결과</h2>
+
+{% if latest_drawn %}
+    <p>{{ latest_drawn.round_number }}회차</p>
+    <p>당첨 번호: {{ latest_drawn.winning_numbers }}</p>
+    <p>보너스 번호: {{ latest_drawn.bonus_number }}</p>
+    <p>추첨 시간: {{ latest_drawn.drawn_at }}</p>
+{% else %}
+    <p>아직 추첨 완료된 회차가 없습니다.</p>
+{% endif %}
+
+<hr>
+
+<a href="{% url 'lotto:my_tickets' %}">내 티켓 보기</a>
+<br>
+<a href="{% url 'lotto:admin_draw_list' %}">관리자 추첨 페이지</a>
+<br>
+<a href="/admin/">Django 관리자 페이지</a>
 </body>
 </html>
