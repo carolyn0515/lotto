@@ -1,9 +1,6 @@
 import random
 from pathlib import Path
 
-import joblib
-import pandas as pd
-
 from .models import Ticket
 from .services import generate_random_numbers
 
@@ -15,6 +12,8 @@ HISTORY_PATH = BASE_DIR / "ml" / "data" / "synthetic_lotto_history.csv"
 
 
 def load_model_bundle():
+    import joblib
+
     if not MODEL_PATH.exists():
         raise FileNotFoundError("ML 모델 파일이 없습니다. 먼저 ml 컨테이너에서 학습을 실행해주세요.")
 
@@ -22,6 +21,8 @@ def load_model_bundle():
 
 
 def load_history():
+    import pandas as pd
+
     if not HISTORY_PATH.exists():
         raise FileNotFoundError("ML 학습용 이력 데이터가 없습니다.")
 
@@ -79,6 +80,8 @@ def get_number_group(number):
 
 
 def build_prediction_features(rows, feature_columns):
+    import pandas as pd
+
     """
     최신 이력 기준으로 1~45번 각각의 feature row를 만든다.
     """
