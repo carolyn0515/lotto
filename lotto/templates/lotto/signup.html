@@ -1,24 +1,22 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <title>회원가입</title>
-</head>
-<body>
+{% extends "lotto/base.html" %}
+
+{% block title %}회원가입 | Lotto Lab{% endblock %}
+
+{% block content %}
+<section class="card form-card">
+    <p class="eyebrow">Start</p>
     <h1>회원가입</h1>
+    <p class="lead">가입하면 기본 코인 10개가 지급됩니다.</p>
 
-    <form method="post">
+    <form method="post" class="section">
         {% csrf_token %}
-
         {{ form.as_p }}
-
-        <button type="submit">회원가입</button>
+        <button class="button full" type="submit">회원가입</button>
     </form>
 
-    <hr>
-
-    <a href="{% url 'lotto:login' %}">이미 계정이 있다면 로그인</a>
-    <br>
-    <a href="{% url 'lotto:home' %}">홈으로</a>
-</body>
-</html>
+    <div class="actions">
+        <a class="button secondary" href="{% url 'lotto:login' %}">이미 계정이 있어요</a>
+        <a class="button ghost" href="{% url 'lotto:home' %}">홈으로</a>
+    </div>
+</section>
+{% endblock %}
