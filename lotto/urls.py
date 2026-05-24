@@ -8,5 +8,10 @@ urlpatterns=[
         views.purchase_manual,
         name="purchase_manual",
     ),
+    path(
+        "draws/<int:draw_id>/purchase/auto/",
+        views.purchase_auto,
+        name="purchase_auto",
+    ),
     path("my_tickets/", views.my_tickets, name="my_tickets"),
 ]
