@@ -4,7 +4,6 @@ from django.utils import timezone
 
 from .models import Ticket, WinningResult
 
-
 def validate_lotto_numbers(numbers):
     if len(numbers) != 6:
         raise ValueError("로또 번호는 정확히 6개여야 합니다.")
@@ -113,3 +112,6 @@ def run_draw(draw):
     create_winning_results(draw)
 
     return draw
+
+def generate_random_numbers():
+    return sorted(random.sample(range(1, 46), 6))
