@@ -27,4 +27,5 @@ urlpatterns=[
     path("manager/draws/create/", views.create_draw_view, name="create_draw"),
     path("manager/draws/<int:draw_id>/run/", views.run_draw_view, name="run_draw"),
     path("manager/sales/", views.admin_sales_report, name="admin_sales_report"),
+    path("watch-ad/", views.watch_ad, name="watch_ad"),
 ]

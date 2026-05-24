@@ -141,3 +141,10 @@ def create_next_draw(close_at):
         close_at = close_at,
     )
     return draw
+
+AD_REWARD_COIN = 5
+
+def reward_ad_coin(user):
+    user.profile.coin += AD_REWARD_COIN
+    user.profile.save()
+    return user.profile.coin

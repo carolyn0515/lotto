@@ -4,9 +4,14 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth import login
 from .forms import DrawCreateForm, ManualPurchaseForm, SignUpForm
-from .models import Draw, Ticket, WinningResult
-from .services import generate_random_numbers, purchase_ticket, run_draw, create_next_draw
-
+from .models import Draw, Ticket, WinningResult, UserProfile
+from .services import (
+    create_next_draw,
+    generate_random_numbers,
+    purchase_ticket,
+    reward_ad_coin,
+    run_draw,
+)
 def home(request):
     current_draw = (
         Draw.objects
@@ -185,6 +190,11 @@ def signup(request):
 
         if form.is_valid():
             user = form.save()
+
+            UserProfile.objects.get_or_create(
+                user=user,
+                coin=10
+            )
             login(request, user)
             messages.success(request, "회원가입이 완료되었습니다.")
             return redirect("lotto:home")
@@ -196,3 +206,13 @@ def signup(request):
     }
 
     return render(request, "lotto/signup.html", context)
+
+@login_required
+def watch_ad(request):
+    if request.method == "POST":
+        new_coin = reward_ad_coin(request.user)
+        messages.success(
+            request,
+            f"광고 시청 보상으로 코인 5개가 지급되었습니다. 현재 보유 코인: {new_coin}개"
+        )
+    return redirect("lotto:home")

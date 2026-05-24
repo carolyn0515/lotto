@@ -6,10 +6,24 @@
 </head>
 <body>
     <h1>6/45 Lotto Service</h1>
-
+{% if messages %}
+    <ul>
+        {% for message in messages %}
+            <li>{{ message }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
 {% if user.is_authenticated %}
     <p>{{ user.username }}님, 로그인 중입니다.</p>
     <p>보유 코인: {{ user.profile.coin }}</p>
+
+    <form method="post" action="{% url 'lotto:watch_ad' %}">
+        {% csrf_token %}
+        <button type="submit">가상 광고 시청하고 코인 받기</button>
+    </form>
+
+    <br>
+
     <form method="post" action="{% url 'lotto:logout' %}">
         {% csrf_token %}
         <button type="submit">로그아웃</button>
