@@ -1,24 +1,22 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <title>로그인</title>
-</head>
-<body>
+{% extends "lotto/base.html" %}
+
+{% block title %}로그인 | Lotto Lab{% endblock %}
+
+{% block content %}
+<section class="card form-card">
+    <p class="eyebrow">Welcome back</p>
     <h1>로그인</h1>
+    <p class="lead">티켓 구매와 당첨 확인을 계속하려면 계정으로 로그인하세요.</p>
 
-    <form method="post">
+    <form method="post" class="section">
         {% csrf_token %}
-
         {{ form.as_p }}
-
-        <button type="submit">로그인</button>
+        <button class="button full" type="submit">로그인</button>
     </form>
 
-    <hr>
-
-    <a href="{% url 'lotto:signup' %}">회원가입</a>
-    <br>
-    <a href="{% url 'lotto:home' %}">홈으로</a>
-</body>
-</html>
+    <div class="actions">
+        <a class="button secondary" href="{% url 'lotto:signup' %}">회원가입</a>
+        <a class="button ghost" href="{% url 'lotto:home' %}">홈으로</a>
+    </div>
+</section>
+{% endblock %}
