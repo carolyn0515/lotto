@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>수동 구매</title>
+</head>
+<body>
+    <h1>수동 번호 구매</h1>
+
+    <h2>{{ draw.round_number }}회차</h2>
+    <p>판매 마감 시간: {{ draw.close_at }}</p>
+
+    <form method="post">
+        {% csrf_token %}
+
+        {{ form.as_p }}
+
+        <button type="submit">구매하기</button>
+    </form>
+
+    <hr>
+
+    <a href="{% url 'lotto:home' %}">홈으로</a>
+</body>
+</html>

@@ -13,7 +13,7 @@
 
         <a href="{% url 'lotto:purchase_manual' current_draw.id %}">수동 구매하기</a>
         <br>
-        <a href="#">자동 구매하기</a>
+        <a href="{% url 'lotto:purchase_auto' current_draw.id %}">자동 구매하기</a>
     {% else %}
         <p>현재 진행 중인 회차가 없습니다.</p>
     {% endif %}
