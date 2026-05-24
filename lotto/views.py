@@ -2,8 +2,8 @@ from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
-
-from .forms import ManualPurchaseForm, DrawCreateForm
+from django.contrib.auth import login
+from .forms import DrawCreateForm, ManualPurchaseForm, SignUpForm
 from .models import Draw, Ticket, WinningResult
 from .services import generate_random_numbers, purchase_ticket, run_draw, create_next_draw
 
@@ -178,3 +178,21 @@ def create_draw_view(request):
     }
 
     return render(request, "lotto/create_draw.html", context)
+
+def signup(request):
+    if request.method == "POST":
+        form = SignUpForm(request.POST)
+
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            messages.success(request, "회원가입이 완료되었습니다.")
+            return redirect("lotto:home")
+    else:
+        form = SignUpForm()
+    
+    context = {
+        "form": form,
+    }
+
+    return render(request, "lotto/signup.html", context)

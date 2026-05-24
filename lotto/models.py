@@ -1,6 +1,16 @@
 from django.conf import settings
 from django.db import models
 
+class UserProfile(models.Model):
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="profile"
+    )
+    coin = models.PositiveIntegerField(default=10)
+    def __str__(self):
+        return f"{self.user.username} - {self.coin} coins"
+
 class Draw(models.Model):
     round_number = models.PositiveIntegerField(unique=True)
     winning_numbers = models.JSONField(null=True, blank=True)

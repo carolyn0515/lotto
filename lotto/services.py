@@ -41,6 +41,7 @@ def purchase_ticket(user, draw, numbers, purchase_type):
     validate_lotto_numbers(numbers)
     validate_purchase_type(purchase_type)
     validate_draw_is_open(draw)
+    validate_user_has_enough_coin(user)
 
     ticket = Ticket.objects.create(
         user=user,
@@ -49,7 +50,20 @@ def purchase_ticket(user, draw, numbers, purchase_type):
         purchase_type=purchase_type,
     )
 
+    decrease_user_coin(user)
+    
     return ticket
+
+TICKET_PRICE = 1
+
+def validate_user_has_enough_coin(user):
+        if user.profile.coin < TICKET_PRICE:
+            raise ValueError("코인이 부족하여 티켓을 구매할 수 없습니다.")
+        
+def decrease_user_coin(user):
+    user.profile.coin -= TICKET_PRICE
+    user.profile.save()
+
 
 def calculate_rank(ticket_numbers, winning_numbers, bonus_number):
     matched_count = len(set(ticket_numbers) & set(winning_numbers))
