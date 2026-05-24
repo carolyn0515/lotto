@@ -316,9 +316,9 @@ docker compose exec web python manage.py test
 
 [https://github.com/carolyn0515/lotto](https://github.com/carolyn0515/lotto)
 
-## 한계점 및 개선 방향
+## 추가 개선 방향
 
-- 현재 자동화 테스트가 부족하므로 Django TestCase 기반 테스트 추가 필요
+- Django TestCase 기반 자동화 테스트를 추가하면 기능 검증 범위를 더 넓힐 수 있음
 - 실제 로또 공개 데이터 수집 자동화 가능
 - Celery와 Redis를 활용한 ML 학습 비동기 처리 가능
 - 관리자 통계 차트 및 대시보드 시각화 개선 가능
