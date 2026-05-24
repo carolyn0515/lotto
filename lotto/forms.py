@@ -1,5 +1,6 @@
 from django import forms
-
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
 
 class ManualPurchaseForm(forms.Form):
     number1 = forms.IntegerField(min_value=1, max_value=45, label="번호 1")
@@ -45,3 +46,11 @@ class DrawCreateForm(forms.Form):
         input_formats=["%Y-%m-%d %H:%M"],
         help_text="예: 2026-05-25 20:00"
     )
+
+class SignUpForm(UserCreationForm):
+    email = forms.EmailField(required=False, label="이메일")
+    
+    class Meta:
+        model = User
+        fields = ["username", "email", "password1", "password2"]
+        
