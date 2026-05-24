@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>가상 광고 시청</title>
+</head>
+<body>
+    <h1>가상 광고 시청</h1>
+
+    <div style="border: 1px solid #333; padding: 20px; width: 400px;">
+        <h2>LOTTO BONUS AD</h2>
+        <p>행운의 번호를 기다리는 동안 잠시 광고를 시청해주세요.</p>
+
+        <video width="360" height="200" controls autoplay muted>
+            <source src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4" type="video/mp4">
+            브라우저가 video 태그를 지원하지 않습니다.
+        </video>
+
+        <p id="countdown">10초 후 보상을 받을 수 있습니다.</p>
+
+        <form method="post">
+            {% csrf_token %}
+            <button id="reward-button" type="submit" disabled>
+                보상 받기
+            </button>
+        </form>
+    </div>
+
+    <hr>
+
+    <a href="{% url 'lotto:home' %}">홈으로</a>
+
+    <script>
+        let remainingSeconds = 10;
+        const countdownElement = document.getElementById("countdown");
+        const rewardButton = document.getElementById("reward-button");
+
+        const timer = setInterval(function () {
+            remainingSeconds -= 1;
+
+            if (remainingSeconds > 0) {
+                countdownElement.textContent = remainingSeconds + "초 후 보상을 받을 수 있습니다.";
+            } else {
+                clearInterval(timer);
+                countdownElement.textContent = "광고 시청이 완료되었습니다. 보상을 받을 수 있습니다.";
+                rewardButton.disabled = false;
+            }
+        }, 1000);
+    </script>
+</body>
+</html>
