@@ -54,3 +54,9 @@ def my_tickets(request):
         .select_related("draw")
         .order_by("-created_at")
     )
+
+    context = {
+        "tickets": tickets,
+    }
+
+    return render(request, "lotto/my_tickets.html", context)
