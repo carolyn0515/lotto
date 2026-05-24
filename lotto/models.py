@@ -39,7 +39,8 @@ class Ticket(models.Model):
 class WinningResult(models.Model):
     ticket = models.OneToOneField(
         Ticket,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        related_name="winning_result"
     )
     matched_count = models.PositiveIntegerField()
     matched_bonus = models.BooleanField(default=False)
