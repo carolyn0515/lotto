@@ -122,9 +122,6 @@ def run_draw_view(request, draw_id):
 @staff_member_required
 def admin_sales_report(request):
     draws = Draw.objects.order_by("-round_number")
-    ml_ticket_count = tickets.filter(
-        purchase_type=Ticket.PURCHASE_TYPE_ML
-    ).count()
     reports = []
 
     for draw in draws:
@@ -138,15 +135,9 @@ def admin_sales_report(request):
         auto_ticket_count = tickets.filter(
             purchase_type=Ticket.PURCHASE_TYPE_AUTO
         ).count()
-
-        rank_counts = {
-            "1등": results.filter(rank="1등").count(),
-            "2등": results.filter(rank="2등").count(),
-            "3등": results.filter(rank="3등").count(),
-            "4등": results.filter(rank="4등").count(),
-            "5등": results.filter(rank="5등").count(),
-            "낙첨": results.filter(rank="낙첨").count(),
-        }
+        ml_ticket_count = tickets.filter(
+            purchase_type=Ticket.PURCHASE_TYPE_ML
+        ).count()
 
         reports.append({
             "draw": draw,
@@ -154,8 +145,13 @@ def admin_sales_report(request):
             "manual_ticket_count": manual_ticket_count,
             "auto_ticket_count": auto_ticket_count,
             "result_count": results.count(),
-            "rank_counts": rank_counts,
             "ml_ticket_count": ml_ticket_count,
+            "first_rank_count": results.filter(rank="1등").count(),
+            "second_rank_count": results.filter(rank="2등").count(),
+            "third_rank_count": results.filter(rank="3등").count(),
+            "fourth_rank_count": results.filter(rank="4등").count(),
+            "fifth_rank_count": results.filter(rank="5등").count(),
+            "losing_count": results.filter(rank="낙첨").count(),
         })
 
     context = {
