@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>관리자 추첨 페이지</title>
+</head>
+<body>
+    <h1>관리자 추첨 페이지</h1>
+
+    {% if messages %}
+        <ul>
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    {% if draws %}
+        <ul>
+            {% for draw in draws %}
+                <li>
+                    {{ draw.round_number }}회차 /
+                    마감 시간: {{ draw.close_at }} /
+
+                    {% if draw.is_drawn %}
+                        추첨 완료 /
+                        당첨 번호: {{ draw.winning_numbers }} /
+                        보너스: {{ draw.bonus_number }}
+                    {% else %}
+                        추첨 전
+
+                        <form method="post" action="{% url 'lotto:run_draw' draw.id %}" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit">추첨 실행</button>
+                        </form>
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>등록된 회차가 없습니다.</p>
+    {% endif %}
+
+    <hr>
+
+    <a href="{% url 'lotto:home' %}">홈으로</a>
+    <br>
+    <a href="/admin/">Django 관리자 페이지</a>
+</body>
+</html>
