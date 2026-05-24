@@ -1,68 +1,71 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <title>관리자 판매 내역</title>
-</head>
-<body>
+{% extends "lotto/base.html" %}
+
+{% block title %}판매 리포트 | Lotto Lab{% endblock %}
+
+{% block content %}
+<section class="hero-panel">
+    <p class="eyebrow">Sales Report</p>
     <h1>관리자 판매/당첨 내역</h1>
+    <p class="lead">회차별 판매량, 구매 방식 비중, 당첨 결과 생성 현황을 확인합니다.</p>
+    <div class="actions">
+        <a class="button secondary" href="{% url 'lotto:admin_draw_list' %}">관리자 추첨 페이지</a>
+        <a class="button ghost" href="{% url 'lotto:home' %}">홈으로</a>
+    </div>
+</section>
 
+<section class="section table-card">
     {% if reports %}
-        <table border="1">
-            <thead>
-                <tr>
-                    <th>회차</th>
-                    <th>추첨 상태</th>
-                    <th>전체 판매 수</th>
-                    <th>수동 구매</th>
-                    <th>자동 구매</th>
-                    <th>ML 추천 구매</th>
-                        <td>{{ report.ml_ticket_count }}</td>
-                    <th>결과 생성 수</th>
-                    <th>1등</th>
-                    <th>2등</th>
-                    <th>3등</th>
-                    <th>4등</th>
-                    <th>5등</th>
-                    <th>낙첨</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for report in reports %}
+        <div class="table-scroll">
+            <table>
+                <thead>
                     <tr>
-                        <td>{{ report.draw.round_number }}회차</td>
-
-                        <td>
-                            {% if report.draw.is_drawn %}
-                                추첨 완료
-                            {% else %}
-                                추첨 전
-                            {% endif %}
-                        </td>
-
-                        <td>{{ report.total_ticket_count }}</td>
-                        <td>{{ report.manual_ticket_count }}</td>
-                        <td>{{ report.auto_ticket_count }}</td>
-                        <td>{{ report.result_count }}</td>
-
-                        <td>{{ report.rank_counts.1등 }}</td>
-                        <td>{{ report.rank_counts.2등 }}</td>
-                        <td>{{ report.rank_counts.3등 }}</td>
-                        <td>{{ report.rank_counts.4등 }}</td>
-                        <td>{{ report.rank_counts.5등 }}</td>
-                        <td>{{ report.rank_counts.낙첨 }}</td>
+                        <th>회차</th>
+                        <th>추첨 상태</th>
+                        <th>전체 판매</th>
+                        <th>수동</th>
+                        <th>자동</th>
+                        <th>ML 추천</th>
+                        <th>결과</th>
+                        <th>1등</th>
+                        <th>2등</th>
+                        <th>3등</th>
+                        <th>4등</th>
+                        <th>5등</th>
+                        <th>낙첨</th>
                     </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    {% for report in reports %}
+                        <tr>
+                            <td><strong>{{ report.draw.round_number }}회차</strong></td>
+                            <td>
+                                {% if report.draw.is_drawn %}
+                                    <span class="badge success">추첨 완료</span>
+                                {% else %}
+                                    <span class="badge warning">추첨 전</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ report.total_ticket_count }}</td>
+                            <td>{{ report.manual_ticket_count }}</td>
+                            <td>{{ report.auto_ticket_count }}</td>
+                            <td>{{ report.ml_ticket_count }}</td>
+                            <td>{{ report.result_count }}</td>
+                            <td>{{ report.first_rank_count }}</td>
+                            <td>{{ report.second_rank_count }}</td>
+                            <td>{{ report.third_rank_count }}</td>
+                            <td>{{ report.fourth_rank_count }}</td>
+                            <td>{{ report.fifth_rank_count }}</td>
+                            <td>{{ report.losing_count }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     {% else %}
-        <p>등록된 회차가 없습니다.</p>
+        <div class="empty">
+            <h2>등록된 회차가 없습니다.</h2>
+            <p>회차를 생성하면 판매 리포트가 표시됩니다.</p>
+        </div>
     {% endif %}
-
-    <hr>
-
-    <a href="{% url 'lotto:admin_draw_list' %}">관리자 추첨 페이지</a>
-    <br>
-    <a href="{% url 'lotto:home' %}">홈으로</a>
-</body>
-</html>
+</section>
+{% endblock %}
