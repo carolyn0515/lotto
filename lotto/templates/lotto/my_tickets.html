@@ -1,45 +1,52 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <title>내 티켓</title>
-</head>
-<body>
+{% extends "lotto/base.html" %}
+
+{% block title %}내 티켓 | Lotto Lab{% endblock %}
+
+{% block content %}
+<section class="hero-panel">
+    <p class="eyebrow">My Tickets</p>
     <h1>내 티켓 목록</h1>
+    <p class="lead">구매한 번호와 추첨 결과를 회차별로 확인할 수 있습니다.</p>
+</section>
 
-    {% if messages %}
-        <ul>
-            {% for message in messages %}
-                <li>{{ message }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
-
+<section class="section">
     {% if tickets %}
-        <ul>
+        <div class="ticket-list">
             {% for ticket in tickets %}
-    <li>
-        {{ ticket.draw.round_number }}회차 /
-        번호: {{ ticket.numbers }} /
-        구매 방식: {{ ticket.get_purchase_type_display }} /
-        구매 시간: {{ ticket.created_at }} /
-
-        {% if ticket.winning_result %}
-            결과: {{ ticket.winning_result.rank }}
-            (맞은 개수: {{ ticket.winning_result.matched_count }},
-            보너스: {{ ticket.winning_result.matched_bonus }})
-        {% else %}
-            결과: 추첨 전
-        {% endif %}
-    </li>
-{% endfor %}
-        </ul>
+                <article class="ticket-card">
+                    <div>
+                        <h3>{{ ticket.draw.round_number }}회차</h3>
+                        <div class="numbers">
+                            {% for number in ticket.numbers %}
+                                <span class="ball primary">{{ number }}</span>
+                            {% endfor %}
+                        </div>
+                        <div class="ticket-meta">
+                            <span class="badge">{{ ticket.get_purchase_type_display }}</span>
+                            <span class="badge">{{ ticket.created_at }}</span>
+                        </div>
+                    </div>
+                    <div>
+                        {% if ticket.winning_result %}
+                            <span class="badge success">{{ ticket.winning_result.rank }}</span>
+                            <p class="muted-text">맞은 개수 {{ ticket.winning_result.matched_count }}개 / 보너스 {{ ticket.winning_result.matched_bonus }}</p>
+                        {% else %}
+                            <span class="badge warning">추첨 전</span>
+                        {% endif %}
+                    </div>
+                </article>
+            {% endfor %}
+        </div>
     {% else %}
-        <p>아직 구매한 티켓이 없습니다.</p>
+        <div class="empty">
+            <h2>아직 구매한 티켓이 없습니다.</h2>
+            <p>현재 회차에서 첫 티켓을 구매해보세요.</p>
+            <a class="button" href="{% url 'lotto:home' %}">구매하러 가기</a>
+        </div>
     {% endif %}
+</section>
 
-    <hr>
-
-    <a href="{% url 'lotto:home' %}">홈으로</a>
-</body>
-</html>
+<div class="actions">
+    <a class="button ghost" href="{% url 'lotto:home' %}">홈으로</a>
+</div>
+{% endblock %}
