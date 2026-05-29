@@ -190,7 +190,7 @@ flowchart TD
 
 ### 내 티켓 목록
 
-![My Tickets](report/images/08_my_tickets.png)
+<img width="1512" height="861" alt="image" src="https://github.com/user-attachments/assets/8a667bef-3f2a-49a4-a52d-d4996ed7454c" />
 
 ### 관리자 추첨 페이지
 
